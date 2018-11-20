@@ -113,101 +113,104 @@
                 var cartographicPosition = Cesium.Cartographic.fromCartesian(entity.position.getValue(Cesium.JulianDate.now()));
                 var latitude = Cesium.Math.toDegrees(cartographicPosition.latitude);
                 var longitude = Cesium.Math.toDegrees(cartographicPosition.longitude);
+                var height = Cesium.Math.toDegrees(cartographicPosition.height);
                 // Modify description
                 var description = '<table class="cesium-infoBox-defaultTable cesium-infoBox-defaultTable-lighter"><tbody>' +
                     '<tr><th>' + "Longitude" + '</th><td>' + longitude.toFixed(5) + '</td></tr>' +
                     '<tr><th>' + "Latitude" + '</th><td>' + latitude.toFixed(5) + '</td></tr>' +
+                    '<tr><th>' + "Latitude" + '</th><td>' + height.toFixed(5) + '</td></tr>' +
                     '</tbody></table>';
                 entity.description = description;
             }
         }
     });
 
-    // var geojsonOptions = {
-    //     clampToGround : true
-    // };
-    // // Load neighborhood boundaries from a GeoJson file
-    // // Data from : https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas/cpf4-rkhq
-    // var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/sampleNeighborhoods.geojson', geojsonOptions);
+    var geojsonOptions = {
+        clampToGround : true
+    };
+    // Load neighborhood boundaries from a GeoJson file
+    // Data from : https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas/cpf4-rkhq
+    var neighborhoodsPromise = Cesium.GeoJsonDataSource.load('./Source/SampleData/sampleNeighborhoods.geojson', geojsonOptions);
 
-    // // Save an new entity collection of neighborhood data
-    // var neighborhoods;
-    // neighborhoodsPromise.then(function(dataSource) {
-    //     // Add the new data as entities to the viewer
-    //     viewer.dataSources.add(dataSource);
-    //     neighborhoods = dataSource.entities;
+    // Save an new entity collection of neighborhood data
+    var neighborhoods;
+    neighborhoodsPromise.then(function(dataSource) {
+        // Add the new data as entities to the viewer
+        viewer.dataSources.add(dataSource);
+        neighborhoods = dataSource.entities;
 
-    //     // Get the array of entities
-    //     var neighborhoodEntities = dataSource.entities.values;
-    //     for (var i = 0; i < neighborhoodEntities.length; i++) {
-    //         var entity = neighborhoodEntities[i];
+        // Get the array of entities
+        var neighborhoodEntities = dataSource.entities.values;
+        for (var i = 0; i < neighborhoodEntities.length; i++) {
+            var entity = neighborhoodEntities[i];
 
-    //         if (Cesium.defined(entity.polygon)) {
-    //             // Use kml neighborhood value as entity name
-    //             entity.name = entity.properties.neighborhood;
-    //             // Set the polygon material to a random, translucent color
-    //             entity.polygon.material = Cesium.Color.fromRandom({
-    //                 red : 0.1,
-    //                 maximumGreen : 0.5,
-    //                 minimumBlue : 0.5,
-    //                 alpha : 0.6
-    //             });
-    //             // Tells the polygon to color the terrain. ClassificationType.CESIUM_3D_TILE will color the 3D tileset, and ClassificationType.BOTH will color both the 3d tiles and terrain (BOTH is the default)
-    //             entity.polygon.classificationType = Cesium.ClassificationType.TERRAIN;
-    //             // Generate Polygon center
-    //             var polyPositions = entity.polygon.hierarchy.getValue(Cesium.JulianDate.now()).positions;
-    //             var polyCenter = Cesium.BoundingSphere.fromPoints(polyPositions).center;
-    //             polyCenter = Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(polyCenter);
-    //             entity.position = polyCenter;
-    //             // Generate labels
-    //             entity.label = {
-    //                 text : entity.name,
-    //                 showBackground : true,
-    //                 scale : 0.6,
-    //                 horizontalOrigin : Cesium.HorizontalOrigin.CENTER,
-    //                 verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
-    //                 distanceDisplayCondition : new Cesium.DistanceDisplayCondition(10.0, 8000.0),
-    //                 disableDepthTestDistance : 100.0
-    //             };
-    //         }
-    //     }
-    // });
+            if (Cesium.defined(entity.polygon)) {
+                // Use kml neighborhood value as entity name
+                entity.name = entity.properties.neighborhood;
+                // Set the polygon material to a random, translucent color
+                entity.polygon.material = Cesium.Color.fromRandom({
+                    red : 0.1,
+                    maximumGreen : 0.5,
+                    minimumBlue : 0.5,
+                    alpha : 0.6
+                });
+                // Tells the polygon to color the terrain. ClassificationType.CESIUM_3D_TILE will color the 3D tileset, and ClassificationType.BOTH will color both the 3d tiles and terrain (BOTH is the default)
+                entity.polygon.classificationType = Cesium.ClassificationType.TERRAIN;
+                // Generate Polygon center
+                var polyPositions = entity.polygon.hierarchy.getValue(Cesium.JulianDate.now()).positions;
+                var polyCenter = Cesium.BoundingSphere.fromPoints(polyPositions).center;
+                polyCenter = Cesium.Ellipsoid.WGS84.scaleToGeodeticSurface(polyCenter);
+                entity.position = polyCenter;
+                // Generate labels
+                entity.label = {
+                    text : entity.name,
+                    showBackground : true,
+                    scale : 0.6,
+                    horizontalOrigin : Cesium.HorizontalOrigin.CENTER,
+                    verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+                    distanceDisplayCondition : new Cesium.DistanceDisplayCondition(10.0, 8000.0),
+                    disableDepthTestDistance : 100.0
+                };
+            }
+        }
+    });
 
-    // // Load a drone flight path from a CZML file
-    // var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/SampleFlight.czml');
+    // Load a drone flight path from a CZML file
+    var dronePromise = Cesium.CzmlDataSource.load('./Source/SampleData/SampleFlight.czml');
 
-    // // Save a new drone model entity
-    // var drone;
-    // dronePromise.then(function(dataSource) {
-    //     viewer.dataSources.add(dataSource);
-    //     // Get the entity using the id defined in the CZML data
-    //     drone = dataSource.entities.getById('Aircraft/Aircraft1');
-    //     // Attach a 3D model
-    //     drone.model = {
-    //         uri : './Source/SampleData/Models/CesiumDrone.gltf',
-    //         minimumPixelSize : 128,
-    //         maximumScale : 1000,
-    //         silhouetteColor : Cesium.Color.WHITE,
-    //         silhouetteSize : 2
-    //     };
-    //     // Add computed orientation based on sampled positions
-    //     drone.orientation = new Cesium.VelocityOrientationProperty(drone.position);
+    // Save a new drone model entity
+    var drone;
+    dronePromise.then(function(dataSource) {
+        viewer.dataSources.add(dataSource);
+        // Get the entity using the id defined in the CZML data
+        drone = dataSource.entities.getById('Aircraft/Aircraft1');
+        // Attach a 3D model
+        drone.model = {
+            uri : './Source/SampleData/Models/CesiumDrone.gltf',
+            minimumPixelSize : 128,
+            maximumScale : 1000,
+            silhouetteColor : Cesium.Color.WHITE,
+            silhouetteSize : 2
+        };
+        // Add computed orientation based on sampled positions
+        drone.orientation = new Cesium.VelocityOrientationProperty(drone.position);
 
-    //     // Smooth path interpolation
-    //     drone.position.setInterpolationOptions({
-    //         interpolationAlgorithm : Cesium.HermitePolynomialApproximation,
-    //         interpolationDegree : 2
-    //     });
-    //     drone.viewFrom = new Cesium.Cartesian3(-30, 0, 0);
-    // });
+        // Smooth path interpolation
+        drone.position.setInterpolationOptions({
+            interpolationAlgorithm : Cesium.HermitePolynomialApproximation,
+            interpolationDegree : 2
+        });
+        drone.viewFrom = new Cesium.Cartesian3(-30, 0, 0);
+    });
 
-    // //////////////////////////////////////////////////////////////////////////
-    // // Load 3D Tileset
-    // //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    // Load 3D Tileset
+    //////////////////////////////////////////////////////////////////////////
 
-    // // Load the NYC buildings tileset
-    // var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(3839) }));
-
+    // Load the NYC buildings tileset
+    // var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(5741) }));
+    ////////// var city = new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(5741) });
+    ////////// viewer.scene.primitives.add(city);
     // // Adjust the tileset height so it's not floating above terrain
     // var heightOffset = -32;
     // city.readyPromise.then(function(tileset) {
