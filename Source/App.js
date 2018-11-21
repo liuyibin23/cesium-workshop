@@ -30,8 +30,8 @@
 
     // Load Cesium World Terrain
     viewer.terrainProvider = Cesium.createWorldTerrain({
-        requestWaterMask : true, // required for water effects
-        requestVertexNormals : true // required for terrain lighting
+        requestWaterMask: true, // required for water effects
+        requestVertexNormals: true // required for terrain lighting
     });
     // Enable depth testing so things behind the terrain disappear.
     viewer.scene.globe.depthTestAgainstTerrain = true;
@@ -47,11 +47,11 @@
     var initialPosition = new Cesium.Cartesian3.fromDegrees(-73.998114468289017509, 40.674512895646692812, 2631.082799425431);
     var initialOrientation = new Cesium.HeadingPitchRoll.fromDegrees(7.1077496389876024807, -31.987223091598949054, 0.025883251314954971306);
     var homeCameraView = {
-        destination : initialPosition,
-        orientation : {
-            heading : initialOrientation.heading,
-            pitch : initialOrientation.pitch,
-            roll : initialOrientation.roll
+        destination: initialPosition,
+        orientation: {
+            heading: initialOrientation.heading,
+            pitch: initialOrientation.pitch,
+            roll: initialOrientation.roll
         }
     };
     // Set the initial view
@@ -84,16 +84,16 @@
     // //////////////////////////////////////////////////////////////////////////
 
     var kmlOptions = {
-        camera : viewer.scene.camera,
-        canvas : viewer.scene.canvas,
-        clampToGround : true
+        camera: viewer.scene.camera,
+        canvas: viewer.scene.canvas,
+        clampToGround: true
     };
     // Load geocache points of interest from a KML file
     // Data from : http://catalog.opendata.city/dataset/pediacities-nyc-neighborhoods/resource/91778048-3c58-449c-a3f9-365ed203e914
     var geocachePromise = Cesium.KmlDataSource.load('./Source/SampleData/sampleGeocacheLocations.kml', kmlOptions);
 
     // Add geocache billboard entities to scene and style them
-    geocachePromise.then(function(dataSource) {
+    geocachePromise.then(function (dataSource) {
         // Add the new data as entities to the viewer
         viewer.dataSources.add(dataSource);
 
@@ -126,7 +126,7 @@
     });
 
     var geojsonOptions = {
-        clampToGround : true
+        clampToGround: true
     };
     // Load neighborhood boundaries from a GeoJson file
     // Data from : https://data.cityofnewyork.us/City-Government/Neighborhood-Tabulation-Areas/cpf4-rkhq
@@ -134,7 +134,7 @@
 
     // Save an new entity collection of neighborhood data
     var neighborhoods;
-    neighborhoodsPromise.then(function(dataSource) {
+    neighborhoodsPromise.then(function (dataSource) {
         // Add the new data as entities to the viewer
         viewer.dataSources.add(dataSource);
         neighborhoods = dataSource.entities;
@@ -149,10 +149,10 @@
                 entity.name = entity.properties.neighborhood;
                 // Set the polygon material to a random, translucent color
                 entity.polygon.material = Cesium.Color.fromRandom({
-                    red : 0.1,
-                    maximumGreen : 0.5,
-                    minimumBlue : 0.5,
-                    alpha : 0.6
+                    red: 0.1,
+                    maximumGreen: 0.5,
+                    minimumBlue: 0.5,
+                    alpha: 0.6
                 });
                 // Tells the polygon to color the terrain. ClassificationType.CESIUM_3D_TILE will color the 3D tileset, and ClassificationType.BOTH will color both the 3d tiles and terrain (BOTH is the default)
                 entity.polygon.classificationType = Cesium.ClassificationType.TERRAIN;
@@ -163,13 +163,13 @@
                 entity.position = polyCenter;
                 // Generate labels
                 entity.label = {
-                    text : entity.name,
-                    showBackground : true,
-                    scale : 0.6,
-                    horizontalOrigin : Cesium.HorizontalOrigin.CENTER,
-                    verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
-                    distanceDisplayCondition : new Cesium.DistanceDisplayCondition(10.0, 8000.0),
-                    disableDepthTestDistance : 100.0
+                    text: entity.name,
+                    showBackground: true,
+                    scale: 0.6,
+                    horizontalOrigin: Cesium.HorizontalOrigin.CENTER,
+                    verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                    distanceDisplayCondition: new Cesium.DistanceDisplayCondition(10.0, 8000.0),
+                    disableDepthTestDistance: 100.0
                 };
             }
         }
@@ -180,25 +180,25 @@
 
     // Save a new drone model entity
     var drone;
-    dronePromise.then(function(dataSource) {
+    dronePromise.then(function (dataSource) {
         viewer.dataSources.add(dataSource);
         // Get the entity using the id defined in the CZML data
         drone = dataSource.entities.getById('Aircraft/Aircraft1');
         // Attach a 3D model
         drone.model = {
-            uri : './Source/SampleData/Models/CesiumDrone.gltf',
-            minimumPixelSize : 128,
-            maximumScale : 1000,
-            silhouetteColor : Cesium.Color.WHITE,
-            silhouetteSize : 2
+            uri: './Source/SampleData/Models/CesiumDrone.gltf',
+            minimumPixelSize: 128,
+            maximumScale: 1000,
+            silhouetteColor: Cesium.Color.WHITE,
+            silhouetteSize: 2
         };
         // Add computed orientation based on sampled positions
         drone.orientation = new Cesium.VelocityOrientationProperty(drone.position);
 
         // Smooth path interpolation
         drone.position.setInterpolationOptions({
-            interpolationAlgorithm : Cesium.HermitePolynomialApproximation,
-            interpolationDegree : 2
+            interpolationAlgorithm: Cesium.HermitePolynomialApproximation,
+            interpolationDegree: 2
         });
         drone.viewFrom = new Cesium.Cartesian3(-30, 0, 0);
     });
@@ -208,33 +208,33 @@
     //////////////////////////////////////////////////////////////////////////
 
     // Load the NYC buildings tileset
-    // var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(5741) }));
+    var city = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(5741) }));
     ////////// var city = new Cesium.Cesium3DTileset({ url: Cesium.IonResource.fromAssetId(5741) });
     ////////// viewer.scene.primitives.add(city);
-    // // Adjust the tileset height so it's not floating above terrain
-    // var heightOffset = -32;
-    // city.readyPromise.then(function(tileset) {
-    //     // Position tileset
-    //     var boundingSphere = tileset.boundingSphere;
-    //     var cartographic = Cesium.Cartographic.fromCartesian(boundingSphere.center);
-    //     var surfacePosition = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
-    //     var offsetPosition = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, heightOffset);
-    //     var translation = Cesium.Cartesian3.subtract(offsetPosition, surfacePosition, new Cesium.Cartesian3());
-    //     tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
-    // });
+    // Adjust the tileset height so it's not floating above terrain
+    var heightOffset = -32;
+    city.readyPromise.then(function (tileset) {
+        // Position tileset
+        var boundingSphere = tileset.boundingSphere;
+        var cartographic = Cesium.Cartographic.fromCartesian(boundingSphere.center);
+        var surfacePosition = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, 0.0);
+        var offsetPosition = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, heightOffset);
+        var translation = Cesium.Cartesian3.subtract(offsetPosition, surfacePosition, new Cesium.Cartesian3());
+        tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
+    });
 
-    // //////////////////////////////////////////////////////////////////////////
-    // // Style 3D Tileset
-    // //////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    // Style 3D Tileset
+    //////////////////////////////////////////////////////////////////////////
 
-    // // Define a white, opaque building style
-    // var defaultStyle = new Cesium.Cesium3DTileStyle({
-    //     color : "color('white')",
-    //     show : true
-    // });
+    // Define a white, opaque building style
+    var defaultStyle = new Cesium.Cesium3DTileStyle({
+        color: "color('white')",
+        show: true
+    });
 
-    // // Set the tileset style to default
-    // city.style = defaultStyle;
+    // Set the tileset style to default
+    city.style = defaultStyle;
 
     // // Define a white, transparent building style
     // var transparentStyle = new Cesium.Cesium3DTileStyle({
@@ -275,24 +275,77 @@
     // // Custom mouse interaction for highlighting and selecting
     // //////////////////////////////////////////////////////////////////////////
 
-    // // If the mouse is over a point of interest, change the entity billboard scale and color
-    // var previousPickedEntity;
-    // var handler = viewer.screenSpaceEventHandler;
-    // handler.setInputAction(function (movement) {
-    //     var pickedPrimitive = viewer.scene.pick(movement.endPosition);
-    //     var pickedEntity = Cesium.defined(pickedPrimitive) ? pickedPrimitive.id : undefined;
-    //     // Unhighlight the previously picked entity
-    //     if (Cesium.defined(previousPickedEntity)) {
-    //         previousPickedEntity.billboard.scale = 1.0;
-    //         previousPickedEntity.billboard.color = Cesium.Color.WHITE;
-    //     }
-    //     // Highlight the currently picked entity
-    //     if (Cesium.defined(pickedEntity) && Cesium.defined(pickedEntity.billboard)) {
-    //         pickedEntity.billboard.scale = 2.0;
-    //         pickedEntity.billboard.color = Cesium.Color.ORANGERED;
-    //         previousPickedEntity = pickedEntity;
-    //     }
-    // }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+    // HTML overlay for showing feature name on mouseover
+    var nameOverlay = document.createElement('div');
+    viewer.container.appendChild(nameOverlay);
+    nameOverlay.className = 'backdrop';
+    nameOverlay.style.display = 'none';
+    nameOverlay.style.position = 'absolute';
+    nameOverlay.style.bottom = '0';
+    nameOverlay.style.left = '0';
+    nameOverlay.style['pointer-events'] = 'none';
+    nameOverlay.style.padding = '4px';
+    nameOverlay.style.backgroundColor = 'black';
+
+    // If the mouse is over a point of interest, change the entity billboard scale and color
+    var previousPickedEntity;
+    var handler = viewer.screenSpaceEventHandler;
+    // var silhouetteBlue = Cesium.PostProcessStageLibrary.createEdgeDetectionStage();//这个方法好像1.50没有，需要1.51，现在还不确定
+    // silhouetteBlue.uniforms.color = Cesium.Color.BLUE;
+    // silhouetteBlue.uniforms.length = 0.01;
+    // silhouetteBlue.selected = [];
+
+    // viewer.scene.postProcessStages.add(Cesium.PostProcessStageLibrary.createSilhouetteStage([silhouetteBlue]));
+
+    var previousModel;
+
+    handler.setInputAction(function (movement) {
+
+        // // If a feature was previously highlighted, undo the highlight
+        // silhouetteBlue.selected = [];
+
+        var pickedPrimitive = viewer.scene.pick(movement.endPosition);
+        var pickedEntity = Cesium.defined(pickedPrimitive) ? pickedPrimitive.id : undefined;
+        // Unhighlight the previously picked entity
+        if (Cesium.defined(previousPickedEntity)) {
+            previousPickedEntity.billboard.scale = 1.0;
+            previousPickedEntity.billboard.color = Cesium.Color.WHITE;
+        }
+
+        if(Cesium.defined(previousModel)){
+            previousModel.silhouetteColor = Cesium.Color.WHITE;
+        }
+
+        // Highlight the currently picked entity
+        if (Cesium.defined(pickedEntity) && Cesium.defined(pickedEntity.billboard)) {
+            pickedEntity.billboard.scale = 2.0;
+            pickedEntity.billboard.color = Cesium.Color.ORANGERED;
+            previousPickedEntity = pickedEntity;
+        }
+
+        if (Cesium.defined(pickedEntity)) {
+            // A feature was picked, so show it's overlay content
+            nameOverlay.style.display = 'block';
+            nameOverlay.style.bottom = viewer.canvas.clientHeight - movement.endPosition.y + 'px';
+            nameOverlay.style.left = movement.endPosition.x + 'px';
+            // var name = pickedEntity.getProperty('name');
+            // if (!Cesium.defined(name)) {
+            //     name = pickedEntity.getProperty('id');
+            // }
+            var name = pickedEntity.name;
+            nameOverlay.textContent = name;
+            if (Cesium.defined(pickedEntity.model)) {
+                pickedEntity.model.silhouetteColor = Cesium.Color.RED;
+                previousModel = pickedEntity.model;
+                // if(pickedEntity.model !== selected.feature){
+                //     silhouetteBlue.selected = [pickedEntity.model];
+                // }
+            }
+        } else {
+            nameOverlay.style.display = 'none';
+        }
+
+    }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
     // //////////////////////////////////////////////////////////////////////////
     // // Setup Camera Modes
