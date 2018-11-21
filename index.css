@@ -68,3 +68,7 @@ button.cesium-infoBox-camera {
 #3DTiles {
     padding-top: 10px;
 }
+
+.cesium-viewer .cesium-widget-credits {
+    display: none;
+}
