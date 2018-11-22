@@ -10,9 +10,12 @@
     url : 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
     // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/tileset.json'
     // url : 'http://localhost:8080/tilesets/TilesetWithTreeBillboards/tileset.json'
+    // url : 'http://localhost:8080/tilesets/Batched/BatchedWithoutBatchTable/tileset.json',
 	}));
     viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0, -0.5, 0));
+
     
+
     var handler = viewer.screenSpaceEventHandler;
 
     var previousModel;
@@ -44,6 +47,13 @@
             var model = content._model;
             model.color = Cesium.Color.RED;
             previousModel = model;
+
+
+            var cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
+            var surface = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude, cartographic.height);
+            var offset = Cesium.Cartesian3.fromRadians(cartographic.longitude, cartographic.latitude,10);
+            var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
+            tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
         }
           
         
