@@ -17,7 +17,7 @@
         // url : 'http://localhost:8080/tilesets/TilesetWithTreeBillboards/tileset.json'
         // url : 'http://localhost:8080/tilesets/Batched/BatchedWithoutBatchTable/tileset.json',
     }));
-    // viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0, -0.5, 0));
+    viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0, -0.5, 0));
 
     tileset.readyPromise.then(function (argument) {
         var cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
@@ -29,15 +29,72 @@
         tileset._root.transform = mat;
         cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
         console.log(`model center:${cartographic.longitude},${cartographic.latitude},${cartographic.height}`);
-        viewer.camera.flyToBoundingSphere(tileset.boundingSphere);
+        viewer.camera.flyToBoundingSphere(tileset.boundingSphere);    
+        // if(viewer.scene.primitives._primitives[0].root.contentReady){
+        //     viewer.scene.primitives._primitives[0].root._content.features[231].color = Cesium.Color.RED;
+        // }else{
+        //     viewer.scene.primitives._primitives[0].root._contentReadyPromise.then(function(arg){
+        //         viewer.scene.primitives._primitives[0].root._content.features[231].color = Cesium.Color.RED;
+        //     });  
+        // }
+         
     });
 
+    
+    var defaultStyle = new Cesium.Cesium3DTileStyle({
+        color:"color('white')",
+        show:true
+    });
+    var yellowStyle = new Cesium.Cesium3DTileStyle({
+        color:"color('yellow')",
+        show:true
+    });
+    var transparentStyle = new Cesium.Cesium3DTileStyle({
+        color:"color('yellow',0.3)",
+        show:true
+    });
+    //Basic_Roof:Live_Roof_over_Wood_Joist_Flat_Roof:184483_mesh22424-Mesh
+    //Basic_Wall:Exterior_-_Brick_on_Block:143478_mesh5445-Mesh
+    var wallStyle = new Cesium.Cesium3DTileStyle({
+        color:{
+            conditions:[
+                ["${name} === 'Basic_Roof:Live_Roof_over_Wood_Joist_Flat_Roof:184483_mesh22424-Mesh'","rgba(45,0,75,0.5)"],
+                ["${name} === 'Basic_Wall:Exterior_-_Brick_on_Block:143478_mesh5445-Mesh'","rgba(45,0,75,0.5)"],
+                ["true","color('red')"]
+            ]
+        }
+    });
+    tileset.style = defaultStyle;
+
+    var tileStyle = document.getElementById('tileStyle');
+    function set3DTileStyle() {
+        var selectedStyle = tileStyle.options[tileStyle.selectedIndex].value;
+        if (selectedStyle === 'none') {
+            tileset.style = defaultStyle;
+            // alert('none');
+        } else if (selectedStyle === 'yellowStyle') {
+            tileset.style = yellowStyle;
+            // alert('yellowStyle');
+        } else if (selectedStyle === 'transparent') {
+            tileset.style = transparentStyle;
+            // alert('transparent');
+        } else if(selectedStyle === 'wallStyle'){
+            tileset.style = wallStyle;
+            // alert('wallStyle');
+        }
+    }
+    tileStyle.addEventListener('change', set3DTileStyle);
 
     var handler = viewer.screenSpaceEventHandler;
 
     var previousModel;
 
     handler.setInputAction(function (movement) {
+        // if(viewer.scene.primitives._primitives[0]._root.contentReady){
+        //     if(viewer.scene.primitives._primitives[0]._root._content._features){
+        //         viewer.scene.primitives._primitives[0]._root._content._features[231].color = Cesium.Color.RED;
+        //     }
+        // }
         // Pick a new feature
         var pickedFeature = viewer.scene.pick(movement.endPosition);
         // if(Cesium.defined(pickedFeature)){
@@ -103,5 +160,43 @@
         console.log(`经纬度:${longitudeString},${latitudeString}`);
         console.log(`弧度制:${cartographicPosition.longitude},${cartographicPosition.latitude}`);
     }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    document.getElementById("btn_color").onclick = function(){
+        if(viewer.scene.primitives._primitives[0]._root.contentReady){
+            if(viewer.scene.primitives._primitives[0]._root._content._features){
+                if(viewer.scene.primitives._primitives[0]._root._content._features[231].color.equals(Cesium.Color.RED)){
+                    viewer.scene.primitives._primitives[0]._root._content._features[231].color = Cesium.Color.YELLOW;
+                } else {
+                    viewer.scene.primitives._primitives[0]._root._content._features[231].color = Cesium.Color.RED;
+                }
+            }
+        }
+        // alert("hello");
+    }
+
+
+
+
+
+    /**
+     * 动态添加气泡窗口
+     */
+    var removeHandler;
+    var content;
+    var autoInfoWindow;
+    var infoDiv = '<div id="trackPopUp" style="display:none;">'+
+        '<div id="trackPopUpContent" class="leaflet-popup" style="top:5px;left:0;">'+
+        '<a class="leaflet-popup-close-button" href="#">×</a>'+
+        '<div class="leaflet-popup-content-wrapper">'+
+        '<div id="trackPopUpLink" class="leaflet-popup-content" style="max-width: 300px;"></div>'+
+        '</div>'+
+        '<div class="leaflet-popup-tip-container">'+
+        '<div class="leaflet-popup-tip"></div>'+
+        '</div>'+
+        '</div>'+
+        '</div>';
+    $("#cesiumContainer").append(infoDiv);
+    var handler3D = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+
 
 }());
