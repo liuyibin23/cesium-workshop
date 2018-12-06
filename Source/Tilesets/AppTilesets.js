@@ -148,18 +148,18 @@
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
 
-    //鼠标点击监听，获取屏幕坐标-弧度制-经纬度
-    handler.setInputAction(function (click) {
-        var screenX = click.position.x;
-        var screenY = click.position.y;
-        // console.log("像素:"+screenX+"："+ screenY)
-        var cartesianPosition = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(screenX, screenY));
-        var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianPosition);  //结果是弧度制
-        var longitudeString = Cesium.Math.toDegrees(cartographicPosition.longitude);
-        var latitudeString = Cesium.Math.toDegrees(cartographicPosition.latitude);
-        console.log(`经纬度:${longitudeString},${latitudeString}`);
-        console.log(`弧度制:${cartographicPosition.longitude},${cartographicPosition.latitude}`);
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    // //鼠标点击监听，获取屏幕坐标-弧度制-经纬度
+    // handler.setInputAction(function (click) {
+    //     var screenX = click.position.x;
+    //     var screenY = click.position.y;
+    //     // console.log("像素:"+screenX+"："+ screenY)
+    //     var cartesianPosition = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(screenX, screenY));
+    //     var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianPosition);  //结果是弧度制
+    //     var longitudeString = Cesium.Math.toDegrees(cartographicPosition.longitude);
+    //     var latitudeString = Cesium.Math.toDegrees(cartographicPosition.latitude);
+    //     console.log(`经纬度:${longitudeString},${latitudeString}`);
+    //     console.log(`弧度制:${cartographicPosition.longitude},${cartographicPosition.latitude}`);
+    // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     document.getElementById("btn_color").onclick = function(){
         if(viewer.scene.primitives._primitives[0]._root.contentReady){
@@ -196,7 +196,100 @@
         '</div>'+
         '</div>';
     $("#cesiumContainer").append(infoDiv);
-    var handler3D = new Cesium.ScreenSpaceEventHandler(scene.canvas);
+    var handler3D = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+    handler3D.setInputAction(function(movement) {
+        var pick = viewer.scene.pick(movement.position);
+        if(pick && pick instanceof Cesium.Cesium3DTileFeature){
+            console.log('picked batchedId:${pick._batchedId}');
+            $('#trackPopUp').show();
+            var cartesianPosition = viewer.camera.pickEllipsoid(movement.position);
+            // var cartographic = Cesium.Cartographic.fromCartesian(movement.position);
+            var cartographic = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianPosition);
+            var point=[cartographic.longitude / Math.PI * 180, cartographic.latitude / Math.PI * 180];
+            var destination=Cesium.Cartesian3.fromDegrees(point[0], point[1], 3000.0);
+            // var id=pick.id._id.replace(/[^0-9]/ig,"");
+            content =
+                '<table><tbody><tr><th style="color:black;">'+pick._batchedId+'</th><td><button style="color:black;" onclick="updateValve('+pick._batchedId+')">确定</button></td><td><button onclick="deleteValve('+pick._batchedId+')" style="color:black;">删除</button></td></tr>'+
+                '<tr><th style="color:black;">类型</th><td><input style="color:black;" value='+pick._batchedId+'></td></tr>'+
+                '<tr><th style="color:black;">经度</th><td><input id="x" style="color:black;" value='+point[0]+'></td></tr>'+
+                '<tr><th style="color:black;">纬度</th><td><input id="y" style="color:black;" value='+point[1]+'></td></tr>'+
+                '</tbody></table>'
+            var obj = {position:movement.position,destination:destination,content:content};
+            infoWindow(obj);
+
+            function infoWindow(obj) {
+                var picked = viewer.scene.pick(obj.position);
+                $(".cesium-selection-wrapper").show();
+                $('#trackPopUpLink').empty();
+                $('#trackPopUpLink').append(obj.content);
+                function positionPopUp (c) {
+                    var x = c.x - ($('#trackPopUpContent').width()) / 2;
+                    // var x = c.x;
+                    var y = c.y - ($('#trackPopUpContent').height());
+                    $('#trackPopUpContent').css('transform', 'translate3d(' + x + 'px, ' + y + 'px, 0)');
+                }
+                var c = new Cesium.Cartesian2(obj.position.x, obj.position.y);
+                $('#trackPopUp').show();
+                positionPopUp(c); // Initial position
 
 
+
+                if (Cesium.defined(picked)) {
+                    var id = Cesium.defaultValue(picked.id, picked.primitive.id);
+                    if (id instanceof Cesium.Entity) {
+                        $(".cesium-selection-wrapper").show();
+                        $('#trackPopUpLink').empty();
+                        $('#trackPopUpLink').append(obj.content);
+                        function positionPopUp (c) {
+                            var x = c.x - ($('#trackPopUpContent').width()) / 2;
+                            var y = c.y - ($('#trackPopUpContent').height());
+                            $('#trackPopUpContent').css('transform', 'translate3d(' + x + 'px, ' + y + 'px, 0)');
+                        }
+                        var c = new Cesium.Cartesian2(obj.position.x, obj.position.y);
+                        $('#trackPopUp').show();
+                        positionPopUp(c); // Initial position
+                        // at the place item
+                        // picked
+                        removeHandler = viewer.scene.postRender.addEventListener(function () {
+                            if(picked.id._polyline!=null){
+                                var pos={};
+                                pos.x=(id._polyline._positions._value["0"].x+id._polyline._positions._value[1].x)/2;
+                                pos.y=(id._polyline._positions._value["0"].y+id._polyline._positions._value[1].y)/2;
+                                pos.z=(id._polyline._positions._value["0"].z+id._polyline._positions._value[1].z)/2;
+                                var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene,pos);
+                            }else{
+                                var changedC = Cesium.SceneTransforms.wgs84ToWindowCoordinates(viewer.scene, id._position._value);
+                            }// If things moved, move the
+                            // popUp too
+                            if ((c.x !== changedC.x) || (c.y !== changedC.y)) {
+                                positionPopUp(changedC);
+                                c = changedC;
+                            }
+                        });
+                        // PopUp close button event handler
+                        $('.leaflet-popup-close-button').click(function() {
+                            $('#trackPopUp').hide();
+                            $('#trackPopUpLink').empty();
+                            $(".cesium-selection-wrapper").hide();
+                            removeHandler.call();
+                            return false;
+                        });
+                        return id;
+                    }
+                }
+            }
+        }
+        else{
+            $('#trackPopUp').hide();
+
+        }
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+    // $(document).ready(function () {
+    //     //console.log('1');
+    //     alert(1);
+    // })
 }());
+
+

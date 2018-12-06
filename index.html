@@ -11,6 +11,7 @@
         <title>New York City</title>
         <!-- The Cesium library. -->
         <script src="ThirdParty/Cesium/Cesium.js"></script>
+        <script src="ThirdParty/Jquery/jquery-3.3.1.js"></script>
         <!-- Style our app. -->
         <link rel="stylesheet" href="index.css" media="screen">
     </head>
@@ -19,7 +20,7 @@
         <div id="cesiumContainer"></div>
 
         <!-- Some input elements for our app. -->
-        <!-- <div class="backdrop" id="menu">
+        <div class="backdrop" id="menu">
             <h2>Sample NYC Geocaches</h2>
             <span><strong>Camera Mode</strong></span>
             <div class="nowrap">
@@ -51,12 +52,12 @@
                 <label for="neighborhoods">Neighborhoods</label>
             </div>
             <br>
-        </div> -->
+        </div>
         <div id="bottom">
             test text
             <button id="btn_color">着色</button>
             <div class="nowrap">
-                <select id="tileStyle">
+                <select id="tileStyle1">
                     <option value="none">None</option>
                     <option value="yellowStyle">yellowStyle</option>
                     <option value="transparent">Transparent</option>
