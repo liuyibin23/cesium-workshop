@@ -83,7 +83,7 @@
     });
     tileset.style = defaultStyle;
 
-    var tileStyle = document.getElementById('tileStyle');
+    var tileStyle = document.getElementById('tileStyle1');
     function set3DTileStyle() {
         var selectedStyle = tileStyle.options[tileStyle.selectedIndex].value;
         if (selectedStyle === 'none') {
