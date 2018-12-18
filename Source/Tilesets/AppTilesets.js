@@ -10,9 +10,16 @@
     // var height = 0;
     var heading = 10;
 
-    var viewer = new Cesium.Viewer('cesiumContainer');
+    var viewer = new Cesium.Viewer('cesiumContainer',{
+        imageryProvider:new Cesium.createOpenStreetMapImageryProvider({
+            url : 'https://a.tile.openstreetmap.org/'
+        }),
+        animation: false,
+        timeline: false
+    });
     var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
-        url: 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
+        url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
+        // url: 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithTreeBillboards/tileset.json'
         // url : 'http://localhost:8080/tilesets/Batched/BatchedWithoutBatchTable/tileset.json',
@@ -314,67 +321,67 @@
     var _teemo_viewer = viewer;
     var _position, _pm_position, _cartesian, max_width = 300, max_height = 500, infoDiv;
     var handler_teemo = new Cesium.ScreenSpaceEventHandler(_teemo_canvas);
-    handler_teemo.setInputAction(function (CLICK) {
-        //http://blog.csdn.net/u013929284/article/details/52503295
-        var cartesian = _teemo_scene.globe.pick(_teemo_camera.getPickRay(CLICK.position), _teemo_scene);
-        var cartographic = _teemo_scene.globe.ellipsoid.cartesianToCartographic(cartesian);
-        var picks = Cesium.SceneTransforms.wgs84ToWindowCoordinates(_teemo_scene, cartesian);
+    // handler_teemo.setInputAction(function (CLICK) {
+    //     //http://blog.csdn.net/u013929284/article/details/52503295
+    //     var cartesian = _teemo_scene.globe.pick(_teemo_camera.getPickRay(CLICK.position), _teemo_scene);
+    //     var cartographic = _teemo_scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+    //     var picks = Cesium.SceneTransforms.wgs84ToWindowCoordinates(_teemo_scene, cartesian);
 
-        _position = CLICK.position;
-        _cartesian = cartesian;
-        _pm_position = {x: picks.x, y: picks.y}
+    //     _position = CLICK.position;
+    //     _cartesian = cartesian;
+    //     _pm_position = {x: picks.x, y: picks.y}
 
-        var lng = cartographic.longitude * 180 / Math.PI;
-        var lat = cartographic.latitude * 180 / Math.PI;
-        var hei = cartographic.height;
+    //     var lng = cartographic.longitude * 180 / Math.PI;
+    //     var lat = cartographic.latitude * 180 / Math.PI;
+    //     var hei = cartographic.height;
 
-        if (infoDiv) {
-            console.warn("气泡尚未关闭");
-            return false;
-        }else {
-            infoDiv = window.document.createElement("div");
-            infoDiv.id = "trackPopUp";
-            infoDiv.style.display = "none";
-            //style="top:0;left:0;"
-            infoDiv.innerHTML = '<div id="trackPopUpContent" class="leaflet-popup">' +
-                '<a class="leaflet-popup-close-button" href="javascript:void(0)">×</a>' +
-                '<div class="leaflet-popup-content-wrapper">' +
-                '<div id="trackPopUpLink" class="leaflet-popup-content" style="max-width: ' + max_width + 'px;max-height: ' + max_height + 'px"><h2>这是一个大大的提示气泡</h2></div>' +
-                '</div>' +
-                '<div class="leaflet-popup-tip-container">' +
-                '<div class="leaflet-popup-tip"></div>' +
-                '</div>' +
-                '</div>';
+    //     if (infoDiv) {
+    //         console.warn("气泡尚未关闭");
+    //         return false;
+    //     }else {
+    //         infoDiv = window.document.createElement("div");
+    //         infoDiv.id = "trackPopUp";
+    //         infoDiv.style.display = "none";
+    //         //style="top:0;left:0;"
+    //         infoDiv.innerHTML = '<div id="trackPopUpContent" class="leaflet-popup">' +
+    //             '<a class="leaflet-popup-close-button" href="javascript:void(0)">×</a>' +
+    //             '<div class="leaflet-popup-content-wrapper">' +
+    //             '<div id="trackPopUpLink" class="leaflet-popup-content" style="max-width: ' + max_width + 'px;max-height: ' + max_height + 'px"><h2>这是一个大大的提示气泡</h2></div>' +
+    //             '</div>' +
+    //             '<div class="leaflet-popup-tip-container">' +
+    //             '<div class="leaflet-popup-tip"></div>' +
+    //             '</div>' +
+    //             '</div>';
 
-            window.document.getElementById("cesiumContainer").appendChild(infoDiv);
-            window.document.getElementById("trackPopUp").style.display = "block";
-        }
+    //         window.document.getElementById("cesiumContainer").appendChild(infoDiv);
+    //         window.document.getElementById("trackPopUp").style.display = "block";
+    //     }
 
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
 
-    var _pm_position_2;
-    _teemo_viewer.scene.postRender.addEventListener(function () {
+    // var _pm_position_2;
+    // _teemo_viewer.scene.postRender.addEventListener(function () {
 
-        if (_pm_position != _pm_position_2) {
-            _pm_position_2 = Cesium.SceneTransforms.wgs84ToWindowCoordinates(_teemo_scene, _cartesian);
-            // var popw = document.getElementById("trackPopUpContent").offsetWidth;
-            // var poph = document.getElementById("trackPopUpContent").offsetHeight;
+    //     if (_pm_position != _pm_position_2) {
+    //         _pm_position_2 = Cesium.SceneTransforms.wgs84ToWindowCoordinates(_teemo_scene, _cartesian);
+    //         // var popw = document.getElementById("trackPopUpContent").offsetWidth;
+    //         // var poph = document.getElementById("trackPopUpContent").offsetHeight;
 
-            // var trackPopUpContent_ = window.document.getElementById("trackPopUpContent");
-            // trackPopUpContent_.style.left = _pm_position_2.x-(popw/2) + 'px';
-            // trackPopUpContent_.style.top = _pm_position_2.y-(poph-10) + 'px';
-            // trackPopUpContent_.style.left = 100 + '';
-            // trackPopUpContent_.style.top = 100 + '';
+    //         // var trackPopUpContent_ = window.document.getElementById("trackPopUpContent");
+    //         // trackPopUpContent_.style.left = _pm_position_2.x-(popw/2) + 'px';
+    //         // trackPopUpContent_.style.top = _pm_position_2.y-(poph-10) + 'px';
+    //         // trackPopUpContent_.style.left = 100 + '';
+    //         // trackPopUpContent_.style.top = 100 + '';
 
-            var popw = $('#trackPopUpContent').width();
-            var poph = $('#trackPopUpContent').height();
+    //         var popw = $('#trackPopUpContent').width();
+    //         var poph = $('#trackPopUpContent').height();
 
-            $('#trackPopUpContent').css('top',_pm_position_2.y-(poph-10) + 'px');
-            $('#trackPopUpContent').css('left',_pm_position_2.x-(popw/2) +'px');
-        }
+    //         $('#trackPopUpContent').css('top',_pm_position_2.y-(poph-10) + 'px');
+    //         $('#trackPopUpContent').css('left',_pm_position_2.x-(popw/2) +'px');
+    //     }
 
-    });
+    // });
 
 }());
 
