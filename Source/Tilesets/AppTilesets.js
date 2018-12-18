@@ -17,6 +17,7 @@
         animation: false,
         timeline: false
     });
+    viewer._cesiumWidget._creditContainer.style.display = 'none';//代码消除水印
     var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
         url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
         // url: 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
