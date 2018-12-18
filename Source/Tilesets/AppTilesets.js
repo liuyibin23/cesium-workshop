@@ -13,10 +13,41 @@
     var viewer = new Cesium.Viewer('cesiumContainer',{
         imageryProvider:new Cesium.createOpenStreetMapImageryProvider({
             url : 'https://a.tile.openstreetmap.org/'
+            // url : 'http://a.tile.openstreetmap.fr/hot/'
         }),
         animation: false,
         timeline: false
     });
+    
+    // var viewer = new Cesium.Viewer('cesiumContainer',{
+    //     imageryProvider:new Cesium.WebMapTileServiceImageryProvider({
+    //         url : 'http://t0.tianditu.com/img_w/wmts?',
+    //         layer:'img',
+    //         style:'default',
+    //         format:'tiles',
+    //         tileMatrixSetID:'w',
+    //         credit:new Cesium.Credit('天地图全球影像服务'),
+    //         maximumLevel:18
+    //     }),
+    //     animation: false,
+    //     timeline: false
+    // });
+    // var osmProvider = new Cesium.createOpenStreetMapImageryProvider({
+    //     url : 'https://a.tile.openstreetmap.org/'
+    // });
+
+    var osmProvider = new Cesium.WebMapTileServiceImageryProvider({
+                url : 'http://t0.tianditu.com/img_w/wmts?',
+                layer:'img',
+                style:'default',
+                format:'tiles',
+                tileMatrixSetID:'w',
+                credit:new Cesium.Credit('天地图全球影像服务'),
+                maximumLevel:18
+            });
+    osmProvider = viewer.imageryLayers.addImageryProvider(osmProvider);
+    osmProvider.alpha = 0.5;
+    osmProvider.brightness = 1.3;
     viewer._cesiumWidget._creditContainer.style.display = 'none';//代码消除水印
     var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
         url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
