@@ -8,7 +8,7 @@
     // var longitude = 104.06001513237308;
     // var latitude = 30.57102115402871;
     // var height = 0;
-    var heading = 10;
+    
 
     var viewer = new Cesium.Viewer('cesiumContainer',{
         imageryProvider:new Cesium.createOpenStreetMapImageryProvider({
@@ -69,6 +69,7 @@
         // var position = Cesium.Cartesian3.fromDegrees(longitude,latitude,height);
         var position = new Cesium.Cartesian3(x,y,z);
         var mat = Cesium.Transforms.eastNorthUpToFixedFrame(position);
+        var heading = 0;
         var rotationX = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationZ(Cesium.Math.toRadians(heading)));
         Cesium.Matrix4.multiply(mat,rotationX,mat);
         tileset._root.transform = mat;
@@ -82,7 +83,11 @@
         // //         viewer.scene.primitives._primitives[0].root._content.features[231].color = Cesium.Color.RED;
         // //     });
         // // }
-
+        var cartographic = cesium2Cartographic(505233.812500,1189.109375,-3128161.000000);
+        var lat=Cesium.Math.toDegrees(cartographic.latitude);
+        var lng=Cesium.Math.toDegrees(cartographic.longitude);
+        var alt=cartographic.height;
+        console.log(`=====>${lat},${lng},${alt}`);
     });
 
     // var heightOffset = -32;
@@ -95,6 +100,14 @@
     //     var translation = Cesium.Cartesian3.subtract(offset, surface, new Cesium.Cartesian3());
     //     tileset.modelMatrix = Cesium.Matrix4.fromTranslation(translation);
     // });
+
+    //笛卡尔坐标转经纬度
+    function cesium2Cartographic(x,y,z){
+        var ellipsoid=viewer.scene.globe.ellipsoid;
+        var cartesian3=new Cesium.Cartesian3(x,y,z);
+        var cartographic=ellipsoid.cartesianToCartographic(cartesian3);
+        return cartographic;
+    }
 
     
     var defaultStyle = new Cesium.Cesium3DTileStyle({
