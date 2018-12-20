@@ -53,6 +53,7 @@
         url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
         // url: 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/tileset.json'
+        // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/city/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithTreeBillboards/tileset.json'
         // url : 'http://localhost:8080/tilesets/Batched/BatchedWithoutBatchTable/tileset.json',
     }));
