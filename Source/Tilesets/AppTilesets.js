@@ -84,7 +84,7 @@
         // //         viewer.scene.primitives._primitives[0].root._content.features[231].color = Cesium.Color.RED;
         // //     });
         // // }
-        var cartographic = cesium2Cartographic(505233.812500,1189.109375,-3128161.000000);
+        var cartographic = cesiumToCartographic(505233.812500,1189.109375,-3128161.000000);
         var lat=Cesium.Math.toDegrees(cartographic.latitude);
         var lng=Cesium.Math.toDegrees(cartographic.longitude);
         var alt=cartographic.height;
@@ -103,7 +103,7 @@
     // });
 
     //笛卡尔坐标转经纬度
-    function cesium2Cartographic(x,y,z){
+    function cesiumToCartographic(x,y,z){
         var ellipsoid=viewer.scene.globe.ellipsoid;
         var cartesian3=new Cesium.Cartesian3(x,y,z);
         var cartographic=ellipsoid.cartesianToCartographic(cartesian3);
@@ -218,18 +218,22 @@
     }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
 
-    // //鼠标点击监听，获取屏幕坐标-弧度制-经纬度
-    // handler.setInputAction(function (click) {
-    //     var screenX = click.position.x;
-    //     var screenY = click.position.y;
-    //     // console.log("像素:"+screenX+"："+ screenY)
-    //     var cartesianPosition = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(screenX, screenY));
-    //     var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianPosition);  //结果是弧度制
-    //     var longitudeString = Cesium.Math.toDegrees(cartographicPosition.longitude);
-    //     var latitudeString = Cesium.Math.toDegrees(cartographicPosition.latitude);
-    //     console.log(`经纬度:${longitudeString},${latitudeString}`);
-    //     console.log(`弧度制:${cartographicPosition.longitude},${cartographicPosition.latitude}`);
-    // }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+    //鼠标点击监听，获取屏幕坐标-弧度制-经纬度
+    handler.setInputAction(function (click) {
+        var screenX = click.position.x;
+        var screenY = click.position.y;
+        // console.log("像素:"+screenX+"："+ screenY)
+        var cartesianPosition = viewer.camera.pickEllipsoid(new Cesium.Cartesian2(screenX, screenY));
+        var cartographicPosition = Cesium.Ellipsoid.WGS84.cartesianToCartographic(cartesianPosition);  //结果是弧度制
+        var longitudeString = Cesium.Math.toDegrees(cartographicPosition.longitude);
+        var latitudeString = Cesium.Math.toDegrees(cartographicPosition.latitude);
+        var ellipsoid=viewer.scene.globe.ellipsoid;
+        var cartesian3 = Cesium.Cartesian3.fromDegrees(longitudeString, latitudeString, 0, ellipsoid);
+        
+        console.log(`经纬度:${longitudeString},${latitudeString}`);
+        console.log(`弧度制:${cartographicPosition.longitude},${cartographicPosition.latitude}`);
+        console.log(`笛卡尔坐标:${cartesian3.x},${cartesian3.y},${cartesian3.z}`);
+    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
     document.getElementById("btn_color").onclick = function(){
         if(viewer.scene.primitives._primitives[0]._root.contentReady){

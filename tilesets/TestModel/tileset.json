@@ -34,6 +34,9 @@
     },
     "geometricError": 100,
     "refine": "ADD",
+    "content":{
+      "url":"42.b3dm"
+    },
     "children": [
       {
         "boundingVolume": {
@@ -48,7 +51,7 @@
         },
         "geometricError": 0,
         "content": {
-          "url": "42.b3dm"
+          "url": "2obj.b3dm"
         }
       },
       {
