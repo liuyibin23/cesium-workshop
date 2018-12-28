@@ -50,6 +50,7 @@
     osmProvider.brightness = 1.3;
     viewer._cesiumWidget._creditContainer.style.display = 'none';//代码消除水印
     var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+        // url: 'http://192.168.232.128:8888/group1/M00/00/00/wKjogFwh1N6AZxbcAAAGVwzt9cI62.json'
         url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
         // url: 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/tileset.json'
