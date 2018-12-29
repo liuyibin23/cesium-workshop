@@ -1,10 +1,8 @@
 {
   "asset": {
-    "version": "0.0",
-    "tilesetVersion": "1.0.0-obj23dtiles",
-    "gltfUpAxis": "Y"
+    "version": "1.0"
   },
-  "geometricError": 200,
+  "geometricError": 100,
   "root": {
     "transform": [
       1,
@@ -31,13 +29,65 @@
         1.8196430628209428,
         0.5380740117421963,
         0,
-        20.850636959075928
+        200.850636959075928
       ]
     },
-    "geometricError": 0,
+    "geometricError": 100,
     "refine": "ADD",
-    "content": {
-      "url": "42.b3dm"
-    }
+    "content":{
+      "url":"42.b3dm"
+    },
+    "children": [
+      {
+        "transform": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          100,
+          0,
+          0,
+          1
+        ],
+        "boundingVolume": {
+          "region": [
+            1.8122971977799742,
+            0.5331935987586693,
+            1.8196430628209428,
+            0.5380740117421963,
+            0,
+            200.850636959075928
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "url": "2obj.b3dm"
+        }
+      },
+      {
+        "boundingVolume": {
+          "region": [
+            1.8122971977799742,
+            0.5331935987586693,
+            1.8196430628209428,
+            0.5380740117421963,
+            0,
+            200.850636959075928
+          ]
+        },
+        "geometricError": 0,
+        "content": {
+          "url": "openwallhouse.b3dm"
+        }
+      }
+    ]
   }
 }

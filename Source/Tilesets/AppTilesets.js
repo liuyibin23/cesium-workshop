@@ -36,22 +36,23 @@
     //     url : 'https://a.tile.openstreetmap.org/'
     // });
 
-    var osmProvider = new Cesium.WebMapTileServiceImageryProvider({
-                url : 'http://t0.tianditu.com/img_w/wmts?',
-                layer:'img',
-                style:'default',
-                format:'tiles',
-                tileMatrixSetID:'w',
-                credit:new Cesium.Credit('天地图全球影像服务'),
-                maximumLevel:18
-            });
-    osmProvider = viewer.imageryLayers.addImageryProvider(osmProvider);
-    osmProvider.alpha = 0.5;
-    osmProvider.brightness = 1.3;
+    // var osmProvider = new Cesium.WebMapTileServiceImageryProvider({
+    //             url : 'http://t0.tianditu.com/img_w/wmts?',
+    //             layer:'img',
+    //             style:'default',
+    //             format:'tiles',
+    //             tileMatrixSetID:'w',
+    //             credit:new Cesium.Credit('天地图全球影像服务'),
+    //             maximumLevel:18
+    //         });
+    // osmProvider = viewer.imageryLayers.addImageryProvider(osmProvider);
+    // osmProvider.alpha = 0.5;
+    // osmProvider.brightness = 1.3;
     viewer._cesiumWidget._creditContainer.style.display = 'none';//代码消除水印
     var tileset = viewer.scene.primitives.add(new Cesium.Cesium3DTileset({
+        url: 'http://localhost:8080/tilesets/BIM/tileset.json'
         // url: 'http://192.168.232.128:8888/group1/M00/00/00/wKjogFwh1N6AZxbcAAAGVwzt9cI62.json'
-        url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
+        // url: 'http://localhost:8080/tilesets/TestModel/tileset.json'
         // url: 'http://localhost:8080/tilesets/TilesetWithDiscreteLOD/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/tileset.json'
         // url : 'http://localhost:8080/tilesets/TilesetWithRequestVolume/city/tileset.json'
@@ -90,6 +91,32 @@
         var lng=Cesium.Math.toDegrees(cartographic.longitude);
         var alt=cartographic.height;
         console.log(`=====>${lat},${lng},${alt}`);
+
+        var cartesian3 = lonlatToCartesian3(103.859142842,28.6651861371,0);
+        var lng1 = Cesium.Math.toRadians(103.859142842);
+        var lat1 = Cesium.Math.toRadians(28.6651861371);
+        console.log(`lng1,lat1=====>${lng1},${lat1}`);
+        console.log(`cartesian3=====>${cartesian3.x},${cartesian3.y},${cartesian3.z}`);
+        var x1 = 535106.7848;
+        var y1 = 3172213.6760;
+        var z1 = 516.4801;
+        var xDelt1 = x1 - cartesian3.x;
+        var yDelt1 = y1 - cartesian3.y;
+        var zDelt1 = z1 - cartesian3.z;
+        console.log(`delt1=====>${xDelt1},${yDelt1},${zDelt1}`);
+        var cartesian3_ = lonlatToCartesian3(103.858084707,28.6612321167,0);
+        var lng2 = Cesium.Math.toRadians(103.858084707);
+        var lat2 = Cesium.Math.toRadians(28.6612321167);
+        console.log(`lng2,lat2=====>${lng2},${lat2}`);
+        console.log(`cartesian3_=====>${cartesian3_.x},${cartesian3_.y},${cartesian3_.z}`);
+        var x2 = 535004.6636;
+        var y2 = 3171775.1358;
+        var z2 = 520.0013;
+        var xDelt2 = x2 - cartesian3_.x;
+        var yDelt2 = y2 - cartesian3_.y;
+        var zDelt2 = z2 - cartesian3_.z;
+        console.log(`delt2=====>${xDelt2},${yDelt2},${zDelt2}`);
+
     });
 
     viewer.homeButton.viewModel.command.beforeExecute.addEventListener(function(e){
@@ -140,6 +167,11 @@
         return cartographic;
     }
 
+    //经纬度转笛卡尔世界坐标
+    function lonlatToCartesian3(longitude,latitude,height){
+        var ellipsoid=viewer.scene.globe.ellipsoid;
+        return Cesium.Cartesian3.fromDegrees(longitude, latitude, height, ellipsoid);
+    }
     
     var defaultStyle = new Cesium.Cesium3DTileStyle({
         color:"color('white')",
