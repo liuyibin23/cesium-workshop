@@ -1,4 +1,6 @@
-// import x
+// import  * as math from 'math.js'//'../../node_modules/mathjs/dist/math.js';
+// import * as math from "mathjs";
+
 (function () {
     "use strict";
 
@@ -61,6 +63,27 @@
     }));
     viewer.zoomTo(tileset, new Cesium.HeadingPitchRange(0, -0.5, 0));
 
+    // viewer.extend(Cesium.viewerCesium3DTilesInspectorMixin);
+    // viewer.extend(Cesium.viewerCesiumInspectorMixin);
+    //103.86025832144783,28.65884503811074
+    var modelMatrix = Cesium.Transforms.eastNorthUpToFixedFrame(
+        Cesium.Cartesian3.fromDegrees(103.86025832144783,28.65884503811074, 0.0));
+
+    
+    // var model = viewer.scene.primitives.add(Cesium.Model.fromGltf({
+    //     url : 'http://localhost:8080/tilesets/BIM/42.gltf',
+    //     modelMatrix : modelMatrix,
+    //     scale : 1.0
+    // }));
+
+    var entity = viewer.entities.add({
+        // position: Cesium.Cartesian3.fromDegrees(103.859142842,28.6651861371),
+        position: new Cesium.Cartesian3(-1341500.0531940116,5437895.405596236,3041061.3224735395),
+        model:{
+            uri: 'http://localhost:8080/tilesets/BIM/42.gltf'
+        }
+    });
+
     tileset.readyPromise.then(function (argument) {
         var x = tileset._root._initialTransform[12];
         var y = tileset._root._initialTransform[13];
@@ -75,7 +98,58 @@
         var heading = 0;
         var rotationX = Cesium.Matrix4.fromRotationTranslation(Cesium.Matrix3.fromRotationZ(Cesium.Math.toRadians(heading)));
         Cesium.Matrix4.multiply(mat,rotationX,mat);
+        var trans = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(0, 0, 0));
+        // Cesium.Matrix4.multiply(mat,trans,mat);
+        var mat1 = tileset._root.children[0].transform;
+        Cesium.Matrix4.multiply(mat1,trans,mat1);
+        tileset._root.children[0].transform = mat1;
         tileset._root.transform = mat;
+
+        var xlen = Cesium.Cartesian3.distance(new Cesium.Cartesian3(-1341576.089439157, 5437682.651748443, 3041393.0587063436), new Cesium.Cartesian3(-1341526.0128421057, 5437911.50755313, 3041008.5362894568));
+        var ylen = Cesium.Cartesian3.distance(new Cesium.Cartesian3(535106.7848, 3172213.6760, 516.4801), new Cesium.Cartesian3(535004.6636, 3171775.1358, 520.0013));
+        var d = math.eval('sqrt(pow((535106.7848-535004.6636),2)+pow((3172213.6760-3171775.1358),2)+pow((516.4801-520.0013),2))');
+        var d1 = math.eval('sqrt(pow((-1341576.089439157-(-1341526.0128421057)),2)+pow((5437682.651748443-5437911.50755313),2)+pow((3041393.0587063436-3041008.5362894568),2))');
+        console.log(`xlen:${xlen},d:${d},d1:${d1}`);
+        console.log(`xlen:${xlen},ylen:${ylen}++++++++++++++++++++++++++++++++++++++++`);
+
+        // var xd = math.eval('535106.7848-535004.6636');
+        // var xd1 = math.eval('-1341576.089439157-(-1341526.0128421057)');
+        //
+        // var xdpow = math.eval('pow((535106.7848-535004.6636),2)');
+        // var xdpow1 = math.eval('pow((-1341576.089439157-(-1341526.0128421057)),2)');
+        //
+        // var yd = math.eval('3172213.6760-3171775.1358');
+        // var yd1 = math.eval('5437682.651748443-5437911.50755313');
+        //
+        // var ydpow = math.eval('pow((3172213.6760-3171775.1358),2)');
+        // var ydpow1 = math.eval('pow((5437682.651748443-5437911.50755313),2)');
+        //
+        // var zd = math.eval('516.4801-520.0013');
+        // var zd1 = math.eval('3041393.0587063436-3041008.5362894568');
+        //
+        // var zdpow = math.eval('pow((516.4801-520.0013),2)');
+        // var zdpow1 = math.eval('pow((3041393.0587063436-3041008.5362894568),2)');
+        //
+        // var sp = math.eval('pow((535106.7848-535004.6636),2)+pow((3172213.6760-3171775.1358),2)+pow((516.4801-520.0013),2)');
+        // var sp1 = math.eval('pow((-1341576.089439157-(-1341526.0128421057)),2)+pow((5437682.651748443-5437911.50755313),2)+pow((3041393.0587063436-3041008.5362894568),2)');
+
+
+        var  cartesian3_1 = new Cesium.Cartesian3(-1341576.089439157, 5437682.651748443, 3041393.0587063436);
+
+        var mat2 = Cesium.Transforms.eastNorthUpToFixedFrame(cartesian3_1);
+
+        // var trans2 = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3(535004.6636-535106.7848, 3171775.1358-3172213.6760, 520.0013-516.4801));
+        var trans2 = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3((534982-535106.7848),(3171832.25-3172213.6760),(522.6118774414062-516.4801)));
+        Cesium.Matrix4.multiply(mat2,trans2,mat2);
+
+        addlabel(cartesian3_1,"hello world");
+        // var cartesian3_2 = Cesium.Cartesian3.add(cartesian3_1,new Cesium.Cartesian3((534982-535106.7848),(3171832.25-3172213.6760),(522.6118774414062-516.4801)));
+        // var cartesian3_2 = new Cesium.Cartesian3((534982-535106.7848),(3171832.25-3172213.6760),(522.6118774414062-516.4801));
+        var cartesian3_2 = new Cesium.Cartesian3((535004.6636-535106.7848),(3171775.1358-3172213.6760),(520.0013-516.4801));
+        var cartesian3_3 = new Cesium.Cartesian3(cartesian3_1.x+cartesian3_2.x,cartesian3_1.y+cartesian3_2.y,cartesian3_1.z+cartesian3_2.z);
+        console.log(`cartesian3_3:${cartesian3_3}`);
+
+
         cartographic = Cesium.Cartographic.fromCartesian(tileset.boundingSphere.center);
         console.log(`model center:${cartographic.longitude},${cartographic.latitude},${cartographic.height}`);
         // viewer.camera.flyToBoundingSphere(tileset.boundingSphere);
@@ -116,6 +190,16 @@
         var yDelt2 = y2 - cartesian3_.y;
         var zDelt2 = z2 - cartesian3_.z;
         console.log(`delt2=====>${xDelt2},${yDelt2},${zDelt2}`);
+
+        var xDelt3 = cartesian3.x - cartesian3_.x;
+        var yDelt3 = cartesian3.y - cartesian3_.y;
+        var zDelt3 = cartesian3.z - cartesian3_.z;
+        console.log(`delt3=====>${xDelt3},${yDelt3},${zDelt3}`);
+
+        var xDelt4 = x1 - x2;
+        var yDelt4 = y1 - y2;
+        var zDelt4 = z1 - z2;
+        console.log(`delt4=====>${xDelt4},${yDelt4},${zDelt4}`);
 
     });
 
@@ -217,6 +301,37 @@
     }
     tileStyle.addEventListener('change', set3DTileStyle);
 
+    var  cartesian3_base = new Cesium.Cartesian3(-1341576.089439157, 5437682.651748443, 3041393.0587063436);//BIM中心提供的纬地坐标对应的经纬度坐标变换的笛卡尔地心坐标
+
+    var weidibase = new Cesium.Cartesian3(535106.7848, 3172213.6760, 516.4801);////BIM中心提供的纬地坐标
+
+    var mat_base = Cesium.Transforms.eastNorthUpToFixedFrame(cartesian3_base);
+
+    function weidiToCartesian3(x,y,z){
+        let xt = x;
+        let yt = -z;
+        let zt = y;
+
+        var trans = Cesium.Matrix4.fromTranslation(new Cesium.Cartesian3((xt-weidibase.x),(yt-weidibase.y),(zt-weidibase.z)));
+        var rmat = mat_base.clone();
+        Cesium.Matrix4.multiply(rmat,trans,rmat);
+        return new Cesium.Cartesian3(rmat[12],rmat[13],rmat[14]);
+    }
+
+    function addlabel(cartesian3,name){
+        viewer.entities.add({
+            // position: Cesium.Cartesian3.fromDegrees(103.859142842,28.6651861371),
+            position: cartesian3,
+            description:'<div>name<div>',
+            ellipse : {
+                semiMinorAxis : 2.5,
+                semiMajorAxis : 4.0,
+                material : Cesium.Color.BLUE.withAlpha(0.5)
+            }
+        });
+    }
+
+    var isAddEntity = false;
     var handler = viewer.screenSpaceEventHandler;
 
     var previousModel;
@@ -224,9 +339,19 @@
     handler.setInputAction(function (movement) {
         // if(viewer.scene.primitives._primitives[0]._root.contentReady){
         //     if(viewer.scene.primitives._primitives[0]._root._content._features){
-        //         viewer.scene.primitives._primitives[0]._root._content._features[231].color = Cesium.Color.RED;
+          
+                var p = viewer.scene.primitives._primitives[0]._root.children[0]._content._features[0].getProperty('maxPoint');
         //     }
         // }
+
+        var  r = viewer.scene.primitives._primitives[0]._root.children[0]._content._features.map( it => weidiToCartesian3(it.getProperty('maxPoint')[0],it.getProperty('maxPoint')[1],it.getProperty('maxPoint')[2]));
+
+        if(!isAddEntity){
+            r.map(it => addlabel(it,'hello world'));
+            isAddEntity = true;
+        }
+
+
         // Pick a new feature
         var pickedFeature = viewer.scene.pick(movement.endPosition);
         // if(Cesium.defined(pickedFeature)){
