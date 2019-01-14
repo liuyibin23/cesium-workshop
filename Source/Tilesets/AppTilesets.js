@@ -76,13 +76,13 @@
     //     scale : 1.0
     // }));
 
-    var entity = viewer.entities.add({
-        // position: Cesium.Cartesian3.fromDegrees(103.859142842,28.6651861371),
-        position: new Cesium.Cartesian3(-1341500.0531940116,5437895.405596236,3041061.3224735395),
-        model:{
-            uri: 'http://localhost:8080/tilesets/BIM/42.gltf'
-        }
-    });
+    // var entity = viewer.entities.add({
+    //     // position: Cesium.Cartesian3.fromDegrees(103.859142842,28.6651861371),
+    //     position: new Cesium.Cartesian3(-1341500.0531940116,5437895.405596236,3041061.3224735395),
+    //     model:{
+    //         uri: 'http://localhost:8080/tilesets/BIM/1obj.gltf'
+    //     }
+    // });
 
     tileset.readyPromise.then(function (argument) {
         var x = tileset._root._initialTransform[12];
@@ -331,6 +331,17 @@
         });
     }
 
+    function addCube(cartesian3,name){
+        viewer.entities.add({
+            // position: Cesium.Cartesian3.fromDegrees(103.859142842,28.6651861371),
+            position: cartesian3,
+            description:'<div>'+name+'<div>',
+            model:{
+                uri: 'http://localhost:8080/tilesets/BIM/1obj.gltf'
+            }
+        });
+    }
+
     var isAddEntity = false;
     var handler = viewer.screenSpaceEventHandler;
 
@@ -347,7 +358,7 @@
         var  r = viewer.scene.primitives._primitives[0]._root.children[0]._content._features.map( it => weidiToCartesian3(it.getProperty('maxPoint')[0],it.getProperty('maxPoint')[1],it.getProperty('maxPoint')[2]));
 
         if(!isAddEntity){
-            r.map(it => addlabel(it,'hello world'));
+            r.map(it => addCube(it,'hello world'));
             isAddEntity = true;
         }
 
